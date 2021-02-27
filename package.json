@@ -1,0 +1,25 @@
+{
+  "name": "unplebify",
+  "version": "1.0.0",
+  "description": "deletes pleb music",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epers/unplebify.git"
+  },
+  "author": "Edwin Pers",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/epers/unplebify/issues"
+  },
+  "homepage": "https://github.com/epers/unplebify#readme",
+  "dependencies": {
+    "@nodelib/fs.walk": "^1.2.6",
+    "ascii-table": "0.0.9",
+    "asciitable": "0.0.7",
+    "yargs": "^16.2.0"
+  }
+}
