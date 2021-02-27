@@ -3,7 +3,8 @@
 import { default as fsWalk } from '@nodelib/fs.walk';
 import { default as yargs } from 'yargs';
 import { default as AsciiTable } from 'ascii-table';
-import { hideBin as hideBin } from 'yargs/helpers'
+import { hideBin as hideBin } from 'yargs/helpers';
+import { default as musicMetadata } from 'music-metadata';
 
 /*
 fsWalk.walk('/mnt/c/Users/perse/Downloads', (err, entries) => {
@@ -46,6 +47,14 @@ function walk(argv) {
     }
   });
   fsWalk.walk(argv.directory, walkSettings, (err, entries) => {
-    console.log(entries);
+    console.log(entries[0]);
+    (async () => {
+      try {
+        const metadata = await musicMetadata.parseFile(entries[0].path);
+        console.log(metadata);
+      } catch (error) {
+        console.error(error.message);
+      }
+    })();
   });
 }

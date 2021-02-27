@@ -20,6 +20,7 @@
     "@nodelib/fs.walk": "^1.2.6",
     "ascii-table": "0.0.9",
     "asciitable": "0.0.7",
+    "music-metadata": "^7.8.1",
     "yargs": "^16.2.0"
   }
 }
