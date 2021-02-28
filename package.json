@@ -21,6 +21,7 @@
     "ascii-table": "0.0.9",
     "asciitable": "0.0.7",
     "music-metadata": "^7.8.1",
+    "spotify-web-api-node": "^5.0.2",
     "yargs": "^16.2.0"
   }
 }

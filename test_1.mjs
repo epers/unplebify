@@ -5,12 +5,12 @@ import { default as yargs } from 'yargs';
 import { default as AsciiTable } from 'ascii-table';
 import { hideBin as hideBin } from 'yargs/helpers';
 import { default as musicMetadata } from 'music-metadata';
+import { default as SpotifyWebApi } from 'spotify-web-api-node';
 
-/*
-fsWalk.walk('/mnt/c/Users/perse/Downloads', (err, entries) => {
-  console.log(entries);
+const spotifyApi = new SpotifyWebApi({
+  clientId: '',
+  clientSecret: ''
 });
-*/
 
 const argv = yargs(hideBin(process.argv))
   .usage('Usage: $0 <command> [options] [directory]')
@@ -35,6 +35,13 @@ const argv = yargs(hideBin(process.argv))
       walk(argv);
     }
   })
+  .command({
+    command: 'scan [directory]',
+    description: 'Recursively scan a directory, checking each file against spotify',
+    handler: (argv) => {
+      scan(argv);
+    }
+  })
   .argv;
 
 function walk(argv) {
@@ -48,13 +55,55 @@ function walk(argv) {
   });
   fsWalk.walk(argv.directory, walkSettings, (err, entries) => {
     console.log(entries[0]);
-    (async () => {
-      try {
-        const metadata = await musicMetadata.parseFile(entries[0].path);
+    readMetadata(entries[0].path)
+      .then((metadata) => {
         console.log(metadata);
-      } catch (error) {
-        console.error(error.message);
-      }
-    })();
+        spotifyApi.searchTracks(metadata.common.title)
+          .then((spotifyTrackData) => {
+            console.log(spotifyTrackData);
+          });
+      });
   });
+}
+
+function scan(argv) {
+  // Retrieve an access token
+  spotifyApi.clientCredentialsGrant().then(
+    function(data) {
+      console.log('The access token expires in ' + data.body['expires_in']);
+      console.log('The access token is ' + data.body['access_token']);
+
+      // Save the access token so that it's used in future calls
+      spotifyApi.setAccessToken(data.body['access_token']);
+      const walkSettings = new fsWalk.Settings ({
+        followSymbolicLinks: false,
+        entryFilter: (entry) => {
+          const regex = new RegExp('^.*(?=\.flac$|\.mp3$|\.m4a$)');
+          return regex.test(entry.name);
+        }
+      });
+      fsWalk.walk(argv.directory, walkSettings, (err, entries) => {
+        console.log(entries[0]);
+        readMetadata(entries[0].path)
+          .then((metadata) => {
+            console.log(metadata);
+            spotifyApi.searchTracks(`${metadata.common.artist} ${metadata.common.title}`)
+              .then((spotifyTrackData) => {
+                console.log(spotifyTrackData.body.tracks.items);
+              });
+          });
+      });
+    },
+    function(err) {
+      console.log(
+        'Something went wrong when retrieving an access token',
+        err.message
+      );
+    }
+  );
+}
+
+
+async function readMetadata (path) {
+  return musicMetadata.parseFile(path);
 }
