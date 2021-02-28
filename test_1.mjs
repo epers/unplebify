@@ -59,10 +59,6 @@ function walk(argv) {
     readMetadata(entries[0].path)
       .then((metadata) => {
         console.log(metadata);
-        spotifyApi.searchTracks(metadata.common.title)
-          .then((spotifyTrackData) => {
-            console.log(spotifyTrackData);
-          });
       });
   });
 }
@@ -90,7 +86,7 @@ function scan(argv) {
             console.log(metadata);
             spotifyApi.searchTracks(`${metadata.common.artist} ${metadata.common.title}`)
               .then((spotifyTrackData) => {
-                console.log(spotifyTrackData.body.tracks.items);
+                console.log(spotifyTrackData.body.tracks.items[0]);
               });
           });
       });
@@ -106,5 +102,5 @@ function scan(argv) {
 
 
 async function readMetadata (path) {
-  return musicMetadata.parseFile(path);
+  return await musicMetadata.parseFile(path);
 }
