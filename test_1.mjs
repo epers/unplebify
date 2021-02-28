@@ -6,10 +6,11 @@ import { default as AsciiTable } from 'ascii-table';
 import { hideBin as hideBin } from 'yargs/helpers';
 import { default as musicMetadata } from 'music-metadata';
 import { default as SpotifyWebApi } from 'spotify-web-api-node';
+import { spotifySecrets as spotifySecrets } from './secrets.mjs';
 
 const spotifyApi = new SpotifyWebApi({
-  clientId: '',
-  clientSecret: ''
+  clientId: spotifySecrets.clientId,
+  clientSecret: spotifySecrets.clientSecret,
 });
 
 const argv = yargs(hideBin(process.argv))
